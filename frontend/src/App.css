@@ -11,7 +11,15 @@
   will-change: filter;
   transition: filter 300ms;
 }
-.logo:hover {
+.logobody {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  background-color: #fafafa;
+}
+button:hover {
+  opacity: 0.9;
+}
+:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
 .logo.react:hover {
@@ -39,4 +47,13 @@
 
 .read-the-docs {
   color: #888;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  background-color: #fafafa;
+}
+button:hover {
+  opacity: 0.9;
 }
