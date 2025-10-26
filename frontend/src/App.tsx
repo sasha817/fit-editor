@@ -5,9 +5,43 @@ import FileUpload from './components/FileUpload';
 
 const App: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [intervals, setIntervals] = useState<any[]>([]); // Replace `any` with your data type if needed
 
-  const handleValidation = () => {
-    console.log('Navigate to /validate-viewer page');
+  const handleValidation = async () => {
+     if (!selectedFile) {
+      alert("Please select a FIT file first");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/validate`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error: ${errorText}`);
+      }
+
+      const result = await response.json();
+      console.log("Backend response:", result);
+
+      if (result.valid && result.intervals) {
+        setIntervals(result.intervals);
+        setError(null);
+      } else {
+        setError(result.error || "No valid data found.");
+      }
+    } catch (err: any) {
+      console.error("Upload failed:", err);
+      setError(err.message);
+    }
   };
 
   const handleEditor = () => {
@@ -44,6 +78,7 @@ const App: React.FC = () => {
           marginTop: '1.5rem'
         }}>
           <button
+            type="button"
             onClick={handleValidation}
             style={{
               backgroundColor: '#007bff',
@@ -54,10 +89,11 @@ const App: React.FC = () => {
               cursor: 'pointer'
             }}
           >
-            Validate / View File
+            {loading ? 'Processing...' : 'Validate / View File'}
           </button>
 
           <button
+            type="button"
             onClick={handleEditor}
             style={{
               backgroundColor: '#28a745',
