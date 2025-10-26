@@ -5,6 +5,7 @@ import FitParser, { FitActivity } from 'fit-file-parser';
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
+const { format_time } = require('./helpers/time-formatter.js');
 
 app.use(cors());
 app.use(express.json());
