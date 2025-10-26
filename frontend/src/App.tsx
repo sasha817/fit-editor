@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import FileUpload from './components/FileUpload';
+import { DownloadJSON } from './components/DownloadJSON';
 
 const App: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [intervals, setIntervals] = useState<any[]>([]); // Replace `any` with your data type if needed
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editedIntervals, setEditedIntervals] = useState<any[]>([]);
 
   const handleValidation = async () => {
      if (!selectedFile) {
@@ -45,7 +48,13 @@ const App: React.FC = () => {
   };
 
   const handleEditor = () => {
-    console.log('Navigate to /editor page');
+    setIsEditMode(true);
+    setEditedIntervals([...intervals]); // copy current data for editing
+  };
+
+  const handleSave = () => {
+    setIsEditMode(false);
+    setIntervals(editedIntervals); // commit edits
   };
 
 return (
@@ -141,22 +150,93 @@ return (
               </tr>
             </thead>
             <tbody>
-              {intervals.map((row, index) => (
-                <tr key={index} style={{
-                  backgroundColor: index % 2 === 0 ? '#f8f9fa' : 'white'
-                }}>
-                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.interval}</td>
-                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.type}</td>
-                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.length}</td>
-                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.time_str}</td>
-                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.pace}</td>
-                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.strokes}</td>
-                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.swolf}</td>
-                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.swim_stroke}</td>
-                </tr>
-              ))}
+              {isEditMode
+                ? editedIntervals.map((row, index) => (
+                    <tr key={index}>
+                      <td>{row.interval}</td>
+                      
+                      {/* Interval type */}
+                      <td>
+                        <select
+                          value={row.type || "swim"}
+                          onChange={(e) => {
+                            const newData = [...editedIntervals];
+                            newData[index].type = e.target.value;
+                            setEditedIntervals(newData);
+                          }}
+                        >
+                          <option value="swim">Swim</option>
+                          <option value="rest">Rest</option>
+                        </select>
+                      </td>
+
+                      {/* Interval length (editable numeric value) */}
+                      <td>
+                        <input
+                          type="number"
+                          value={row.length ?? 25}
+                          onChange={(e) => {
+                            const newData = [...editedIntervals];
+                            newData[index].length = parseInt(e.target.value);
+                            setEditedIntervals(newData);
+                          }}
+                          style={{ width: '4rem', textAlign: 'center' }}
+                        />
+                      </td>
+
+                      {/* Read-only pace, strokes, swolf */}
+                      <td>{row.pace}</td>
+                      <td>{row.strokes}</td>
+                      <td>{row.swolf}</td>
+                    </tr>
+                  ))
+                : intervals.map((row, index) => (
+                    <tr key={index}>
+                      <td>{row.interval}</td>
+                      <td>{row.type || "-"}</td>
+                      <td>{row.length || "25"}</td>
+                      <td>{row.pace}</td>
+                      <td>{row.strokes}</td>
+                      <td>{row.swolf}</td>
+                    </tr>
+                  ))
+              }
             </tbody>
+
           </table>
+            <div style={{ marginTop: '1.5rem' }}>
+              {!isEditMode ? (
+                <button
+                  onClick={handleEditor}
+                  style={{
+                    backgroundColor: '#ffc107',
+                    color: 'black',
+                    padding: '0.6rem 1.2rem',
+                    borderRadius: '5px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Go to Edit Mode
+                </button>
+              ) : (
+                <button
+                  onClick={handleSave}
+                  style={{
+                    backgroundColor: '#28a745',
+                    color: 'white',
+                    padding: '0.6rem 1.2rem',
+                    borderRadius: '5px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Save Changes
+                </button>
+              )}
+              &nbsp;
+              {!isEditMode && intervals.length > 0 && (
+                <DownloadJSON data={intervals} fileName="updated_swim_activity" />
+              )}
+            </div>
         </div>
       )}
     </main>
