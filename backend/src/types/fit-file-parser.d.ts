@@ -14,13 +14,14 @@ declare module 'fit-file-parser' {
     records?: any[];
     events?: any[];
     sport?: string;
+    // Extend with known fields as needed
   }
 
   export default class FitParser {
     constructor(options?: FitParserOptions);
     parse(
       content: Buffer | ArrayBuffer,
-      callback: (error: Error | null, data: FitActivity) => void
+      callback: (error: Error | null,  FitActivity) => void
     ): void;
   }
 }
