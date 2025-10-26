@@ -48,70 +48,123 @@ const App: React.FC = () => {
     console.log('Navigate to /editor page');
   };
 
-  return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column'
+return (
+  <div style={{
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column'
+  }}>
+    <Header />
+
+    <main style={{
+      flex: 1,
+      maxWidth: '800px',
+      margin: '2rem auto',
+      padding: '1rem',
+      textAlign: 'center'
     }}>
-      <Header />
+      <p style={{ marginBottom: '1.5rem', fontSize: '1.1rem', color: '#333' }}>
+        Upload your swimming activity file (.fit) to view and validate its intervals.
+      </p>
 
-      <main style={{
-        flex: 1,
-        maxWidth: '700px',
-        margin: '2rem auto',
-        padding: '1rem',
-        textAlign: 'center'
+      <FileUpload onFileSelected={setSelectedFile} />
+
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '1rem',
+        marginTop: '1.5rem'
       }}>
-        <p style={{ marginBottom: '1.5rem', fontSize: '1.1rem', color: '#333' }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec blandit
-          sit amet enim non tristique. Sed ut turpis ut elit ultricies convallis
-          non in augue.
-        </p>
+        <button
+          onClick={handleValidation}
+          disabled={loading}
+          style={{
+            backgroundColor: '#007bff',
+            color: 'white',
+            padding: '0.7rem 1.2rem',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
+        >
+          {loading ? 'Processing...' : 'Validate / View File'}
+        </button>
 
-        <FileUpload onFileSelected={setSelectedFile} />
+        <button
+          onClick={handleEditor}
+          disabled={loading}
+          style={{
+            backgroundColor: '#28a745',
+            color: 'white',
+            padding: '0.7rem 1.2rem',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer'
+          }}
+        >
+          Go to Editor
+        </button>
+      </div>
 
+      {error && (
         <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: '1rem',
-          marginTop: '1.5rem'
+          marginTop: '1.5rem',
+          padding: '0.8rem',
+          backgroundColor: '#fdecea',
+          color: '#611a15',
+          borderRadius: '5px'
         }}>
-          <button
-            type="button"
-            onClick={handleValidation}
-            style={{
-              backgroundColor: '#007bff',
-              color: 'white',
-              padding: '0.7rem 1.2rem',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer'
-            }}
-          >
-            {loading ? 'Processing...' : 'Validate / View File'}
-          </button>
-
-          <button
-            type="button"
-            onClick={handleEditor}
-            style={{
-              backgroundColor: '#28a745',
-              color: 'white',
-              padding: '0.7rem 1.2rem',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer'
-            }}
-          >
-            Edit File
-          </button>
+          <strong>Error:</strong> {error}
         </div>
-      </main>
+      )}
 
-      <Footer />
-    </div>
-  );
+      {intervals.length > 0 && (
+        <div style={{
+          marginTop: '2rem',
+          overflowX: 'auto'
+        }}>
+          <table style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            border: '1px solid #ccc'
+          }}>
+            <thead style={{ backgroundColor: '#004d99', color: 'white' }}>
+              <tr>
+                <th style={{ padding: '0.5rem' }}>#</th>
+                <th style={{ padding: '0.5rem' }}>Type</th>
+                <th style={{ padding: '0.5rem' }}>Length, m</th>
+                <th style={{ padding: '0.5rem' }}>Elapsed time</th>
+                <th style={{ padding: '0.5rem' }}>Pace (/100m)</th>
+                <th style={{ padding: '0.5rem' }}>Strokes</th>
+                <th style={{ padding: '0.5rem' }}>Swolf</th>
+                <th style={{ padding: '0.5rem' }}>Stroke type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {intervals.map((row, index) => (
+                <tr key={index} style={{
+                  backgroundColor: index % 2 === 0 ? '#f8f9fa' : 'white'
+                }}>
+                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.interval}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.type}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.length}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.time_str}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.pace}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.strokes}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.swolf}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.swim_stroke}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </main>
+
+    <Footer />
+  </div>
+);
+
 };
 
 export default App;
