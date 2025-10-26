@@ -154,7 +154,7 @@ return (
                 ? editedIntervals.map((row, index) => (
                     <tr key={index}>
                       <td>{row.interval}</td>
-                      
+
                       {/* Interval type */}
                       <td>
                         <select
@@ -166,7 +166,7 @@ return (
                           }}
                         >
                           <option value="swim">Swim</option>
-                          <option value="rest">Rest</option>
+                          <option value="pause">Pause</option>
                         </select>
                       </td>
 
@@ -185,19 +185,23 @@ return (
                       </td>
 
                       {/* Read-only pace, strokes, swolf */}
-                      <td>{row.pace}</td>
-                      <td>{row.strokes}</td>
-                      <td>{row.swolf}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.time_str}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.pace}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.strokes}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.swolf}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.swim_stroke}</td>
                     </tr>
                   ))
                 : intervals.map((row, index) => (
                     <tr key={index}>
-                      <td>{row.interval}</td>
-                      <td>{row.type || "-"}</td>
-                      <td>{row.length || "25"}</td>
-                      <td>{row.pace}</td>
-                      <td>{row.strokes}</td>
-                      <td>{row.swolf}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.interval}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.type}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.length}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.time_str}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.pace}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.strokes}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.swolf}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '0.4rem' }}>{row.swim_stroke}</td>
                     </tr>
                   ))
               }
