@@ -57,6 +57,26 @@ const App: React.FC = () => {
     setIntervals(editedIntervals); // commit edits
   };
 
+  const handleExport = async () => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/export-fit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ intervals }), // edited intervals
+    });
+
+    if (!response.ok) {
+      alert("Export failed");
+      return;
+    }
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "edited.fit";
+    link.click();
+  };
+
 return (
   <div style={{
     minHeight: '100vh',
@@ -240,6 +260,51 @@ return (
               {!isEditMode && intervals.length > 0 && (
                 <DownloadJSON data={intervals} fileName="updated_swim_activity" />
               )}
+              &nbsp;
+              {!isEditMode && intervals.length > 0 && (
+                <button
+                  onClick={async () => {
+                    try {
+                      const response = await fetch(
+                        `${import.meta.env.VITE_API_URL}/api/export-fit`,
+                        {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ intervals }),
+                        }
+                      );
+
+                      if (!response.ok) {
+                        const text = await response.text();
+                        alert("Export failed:\n" + text);
+                        return;
+                      }
+
+                      const blob = await response.blob();
+                      const url = URL.createObjectURL(blob);
+                      const link = document.createElement("a");
+                      link.href = url;
+                      link.download = "edited.fit";
+                      link.click();
+                    } catch (err) {
+                      alert("Error exporting FIT file");
+                      console.error(err);
+                    }
+                  }}
+                  style={{
+                    marginTop: "1rem",
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "0.7rem 1.2rem",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Export .FIT File
+                </button>
+              )}
+
             </div>
         </div>
       )}

@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import multer from 'multer';
 import FitParser, { FitActivity } from 'fit-file-parser';
+import exportFitRouter from './routes/exportFit';
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -9,6 +10,7 @@ const { format_time } = require('./helpers/time-formatter.js');
 
 app.use(cors());
 app.use(express.json());
+app.use('/api', exportFitRouter);
 
 // --- VALIDATION + VIEWING ENDPOINT ---
 app.post('/api/validate', upload.single('file'), async (req: Request, res: Response) => {
